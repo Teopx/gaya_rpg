@@ -1,0 +1,91 @@
+name: Validate web and Cloudflare backend
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm run check
+      - run: npm test
+      - run: npm install --ignore-scripts
+      - run: npm run typecheck
+      - run: node scripts/configure-cloud.mjs
+        env:
+          DATABASE_ID: 00000000-0000-0000-0000-000000000000
+          KV_NAMESPACE_ID: '00000000000000000000000000000000'
+          APP_ORIGIN: https://validation.invalid
+      - run: npx wrangler deploy --dry-run --config wrangler.deploy.toml --outdir build/worker
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nacoes-hibridas-web
+          path: |
+            dist/
+            build/worker/
+  godot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: '4.4.1'
+          use-dotnet: false
+          include-templates: true
+      - name: Install matching GUT
+        run: |
+          git clone --depth 1 --branch v9.4.0 https://github.com/bitwes/Gut.git /tmp/gut
+          mkdir -p godot/addons
+          cp -R /tmp/gut/addons/gut godot/addons/gut
+      - run: godot --headless --path godot --editor --import
+      - run: godot --headless --path godot -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit
+      - run: mkdir -p dist/godot
+      - run: godot --headless --path godot --export-release Web ../dist/godot/index.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: godot-web
+          path: dist/godot/
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    needs: [test, godot]
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DATABASE_ID: ${{ vars.DATABASE_ID }}
+      KV_NAMESPACE_ID: ${{ vars.KV_NAMESPACE_ID }}
+      APP_ORIGIN: ${{ vars.APP_ORIGIN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v4
+        with:
+          name: godot-web
+          path: dist/godot/
+      - run: node scripts/configure-cloud.mjs
+      - run: node scripts/seed.mjs
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 migrations apply nacoes-hibridas --remote --config wrangler.deploy.toml
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 execute nacoes-hibridas --remote --file build/seed.sql --config wrangler.deploy.toml
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config wrangler.deploy.toml

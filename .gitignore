@@ -1,0 +1,10 @@
+node_modules/
+build/
+.wrangler/
+wrangler.deploy.toml
+.dev.vars
+.env*
+*.zip
+godot/.godot/
+godot/addons/
+dist/godot/

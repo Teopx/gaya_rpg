@@ -1,0 +1,26 @@
+name = "nacoes-hibridas"
+main = "server/index.ts"
+compatibility_date = "2026-10-17"
+[vars]
+APP_ORIGIN = "https://REPLACE_GAME_DOMAIN"
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "ContinentRoom"
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ContinentRoom"]
+[[d1_databases]]
+binding = "DB"
+database_name = "nacoes-hibridas"
+database_id = "REPLACE_DATABASE_ID"
+migrations_dir = "server/migrations"
+[[kv_namespaces]]
+binding = "NATIONS"
+id = "REPLACE_KV_NAMESPACE_ID"
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "nacoes-hibridas-assets"
