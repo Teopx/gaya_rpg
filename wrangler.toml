@@ -21,6 +21,4 @@ migrations_dir = "server/migrations"
 [[kv_namespaces]]
 binding = "NATIONS"
 id = "REPLACE_KV_NAMESPACE_ID"
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "nacoes-hibridas-assets"
+# R2 is optional: add a MEDIA binding when asset uploads are implemented.

@@ -1,12 +1,18 @@
 name: Validate web and Cloudflare backend
 on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish to Cloudflare after tests and production approval'
+        type: boolean
+        default: false
   push:
     branches: [main]
   pull_request:
 permissions:
   contents: read
 concurrency:
-  group: web-${{ github.ref }}
+  group: web-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   test:
@@ -16,9 +22,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - run: npm ci --ignore-scripts
       - run: npm run check
       - run: npm test
-      - run: npm install --ignore-scripts
       - run: npm run typecheck
       - run: node scripts/configure-cloud.mjs
         env:
@@ -55,11 +61,16 @@ jobs:
           name: godot-web
           path: dist/godot/
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
     needs: [test, godot]
     runs-on: ubuntu-latest
     environment: production
+    concurrency:
+      group: cloudflare-production
+      cancel-in-progress: false
     env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       DATABASE_ID: ${{ vars.DATABASE_ID }}
       KV_NAMESPACE_ID: ${{ vars.KV_NAMESPACE_ID }}
       APP_ORIGIN: ${{ vars.APP_ORIGIN }}
@@ -68,24 +79,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - run: npm ci --ignore-scripts
       - uses: actions/download-artifact@v4
         with:
           name: godot-web
           path: dist/godot/
       - run: node scripts/configure-cloud.mjs
       - run: node scripts/seed.mjs
-      - uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: d1 migrations apply nacoes-hibridas --remote --config wrangler.deploy.toml
-      - uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: d1 execute nacoes-hibridas --remote --file build/seed.sql --config wrangler.deploy.toml
-      - uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --config wrangler.deploy.toml
+      - run: npx --no-install wrangler deploy --dry-run --config wrangler.deploy.toml
+      - run: npx --no-install wrangler d1 migrations apply nacoes-hibridas --remote --config wrangler.deploy.toml
+      - run: npx --no-install wrangler d1 execute nacoes-hibridas --remote --file build/seed.sql --config wrangler.deploy.toml
+      - run: npx --no-install wrangler deploy --config wrangler.deploy.toml
+      - name: Check published health
+        run: curl --fail --retry 3 --retry-delay 5 "$APP_ORIGIN/api/health"

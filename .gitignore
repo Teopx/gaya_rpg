@@ -8,3 +8,6 @@ wrangler.deploy.toml
 godot/.godot/
 godot/addons/
 dist/godot/
+
+# PowerShell cache created by local tooling
+Microsoft/Windows/PowerShell/

@@ -1,5 +1,5 @@
 import { FAUNA,TICK_MS,validateCharacter,parseIntent,movement,near,canAttack } from './rules.mjs';
-type Env={DB:D1Database;ROOMS:DurableObjectNamespace;NATIONS:KVNamespace;ASSETS:Fetcher;MEDIA:R2Bucket;APP_ORIGIN:string};
+type Env={DB:D1Database;ROOMS:DurableObjectNamespace;NATIONS:KVNamespace;ASSETS:Fetcher;APP_ORIGIN:string};
 const encoder=new TextEncoder();
 const json=(data:unknown,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 const hex=(a:ArrayBuffer)=>Array.from(new Uint8Array(a),v=>v.toString(16).padStart(2,'0')).join('');
