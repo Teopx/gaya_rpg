@@ -12,6 +12,7 @@ export const TRACKS = [
   { id:'frontier', title:'Além das Raízes', scene:'Fronteira hostil', root:38, bpm:100, voice:'string', color:9, drums:.4, melody:[0,2,3,7,5,3,2,-2] },
   { id:'raid', title:'O Juramento do Guardião', scene:'Raide', root:38, bpm:112, voice:'string', color:10, drums:.55, melody:[0,7,3,10,7,12,10,7] },
   { id:'ascension', title:'Asas do Primeiro Vivente', scene:'Transformação / ascensão', root:57, bpm:96, voice:'bell', color:11, drums:.28, melody:[0,7,12,15,14,12,10,7] },
+  { id:'madregona', title:'A Sombra entre os Viventes', scene:'Encontro com a Madregona', root:41, bpm:84, voice:'pad', color:13, drums:.3, melody:[0,1,7,10,8,7,3,1] },
   { id:'trailer', title:'ATMOSPHERE: Toda Vida Tem uma Origem', scene:'Tema do trailer · 4 atos', root:50, bpm:88, voice:'string', color:12, drums:.5, bars:16, melody:[0,7,12,14,10,7,3,0] },
 ];
 export const CONTINENT_TRACK = {'América do Sul':'south-america','América do Norte':'north-america','África':'africa','Europa':'europe','Ásia':'asia','Oceania':'oceania','Antártida':'antarctica'};
@@ -19,6 +20,7 @@ export function sceneTrack(state) {
   if (state.creator) return 'characters';
   if (state.codex || state.login || !state.player) return 'opening';
   if (state.morph) return 'ascension';
+  if (state.madregona) return 'madregona';
   if (state.raid) return 'raid';
   if (state.player.z > 4) return 'frontier';
   return CONTINENT_TRACK[state.player.origin] || 'opening';

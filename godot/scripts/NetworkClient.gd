@@ -75,6 +75,8 @@ func _process(_delta: float) -> void:
 			var data = JSON.parse_string(packet.get_string_from_utf8())
 			if data is Dictionary and data.get("type") == "snapshot":
 				snapshot_received.emit(data)
+			elif data is Dictionary and data.get("type") == "error":
+				request_failed.emit("Ação não aceita: %s. Confira forma, energia, recarga e alcance." % data.get("error", "action_rejected"))
 	elif state == WebSocketPeer.STATE_CLOSED:
 		if connected:
 			connected = false

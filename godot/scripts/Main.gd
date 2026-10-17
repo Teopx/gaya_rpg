@@ -11,6 +11,10 @@ var status := Label.new()
 var self_state: Dictionary = {}
 var last_snapshot: Dictionary = {}
 var soundtrack := GayaSoundtrack.new()
+var progression: Dictionary = {}
+var madregona: Dictionary = {}
+var madregona_actor: MeshInstance3D
+var character_status := Label.new()
 
 func cube(position_value: Vector3, size: Vector3, color: Color) -> MeshInstance3D:
 	var mesh := MeshInstance3D.new()
@@ -70,9 +74,52 @@ func _ready() -> void:
 	music_volume.tooltip_text = "Volume da trilha sonora"
 	music_volume.value_changed.connect(soundtrack.set_loudness)
 	music_controls.add_child(music_volume)
+	panel.add_child(character_status)
+	var management := VBoxContainer.new()
+	var management_scroll := ScrollContainer.new()
+	management_scroll.custom_minimum_size = Vector2(340, 260)
+	management_scroll.add_child(management)
+	management_scroll.visible = false
+	var manage_button := Button.new()
+	manage_button.text = "Desenvolver personagem"
+	manage_button.pressed.connect(func(): management_scroll.visible = not management_scroll.visible)
+	panel.add_child(manage_button)
+	panel.add_child(management_scroll)
+	for stat in ["vitality", "power", "spirit"]:
+		var stat_button := Button.new()
+		stat_button.text = {"vitality": "+1 Vitalidade (+10 HP máximo)", "power": "+1 Poder (+2 ataque)", "spirit": "+1 Espírito (+5 energia)"}[stat]
+		stat_button.pressed.connect(func(): network.intent({"type": "attribute", "stat": stat}))
+		management.add_child(stat_button)
+	for slot in [1, 2]:
+		var skill_select := OptionButton.new()
+		for skill in ["Sopro restaurador", "Pulso da centelha", "Véu de sombras", "Garra umbral"]:
+			skill_select.add_item(skill)
+		var equip_button := Button.new()
+		equip_button.text = "Equipar habilidade %s no santuário" % slot
+		equip_button.pressed.connect(func(): network.intent({"type": "equip", "slot": slot, "skill": ["mend", "pulse", "veil", "shadow"][skill_select.selected]}))
+		management.add_child(skill_select)
+		management.add_child(equip_button)
+	var rest_button := Button.new()
+	rest_button.text = "Descansar no santuário"
+	rest_button.pressed.connect(func(): network.intent({"type": "rest"}))
+	management.add_child(rest_button)
+	for form in ["origin", "madregona"]:
+		var form_button := Button.new()
+		form_button.text = "Forma original" if form == "origin" else "Forma Madregona (requer vitória)"
+		form_button.pressed.connect(func(): network.intent({"type": "form", "form": form}))
+		management.add_child(form_button)
+	var disguise := OptionButton.new()
+	disguise.add_item("Sombra revelada")
+	var animals: Array[String] = [""]
+	for fauna in HybridCharacterManager.FAUNA.values():
+		for animal in fauna:
+			animals.append(str(animal))
+			disguise.add_item(str(animal))
+	disguise.item_selected.connect(func(index: int): network.intent({"type": "disguise", "animal": animals[index]}))
+	management.add_child(disguise)
 	var buttons := HBoxContainer.new()
 	panel.add_child(buttons)
-	for action in ["Coletar", "Atacar", "Raide", "Transformar", "Poção"]:
+	for action in ["Coletar", "Atacar", "Raide", "Transformar", "Poção", "Rastrear", "Habilidade Q", "Habilidade R"]:
 		var button := Button.new()
 		button.text = action
 		button.custom_minimum_size = Vector2(90, 48)
@@ -85,6 +132,8 @@ func _ready() -> void:
 
 func apply_snapshot(data: Dictionary) -> void:
 	last_snapshot = data
+	progression = data.get("progression", {})
+	madregona = data.get("madregona", {}) if data.get("madregona") is Dictionary else {}
 	raids.apply_snapshot(data)
 	var present: Array = []
 	for p in data.get("players", []):
@@ -93,11 +142,24 @@ func apply_snapshot(data: Dictionary) -> void:
 		if not actors.has(id):
 			actors[id] = cube(Vector3.ZERO, Vector3(0.5, 1.4, 0.5), Color("d9ddb9") if id == current else Color("c497ab"))
 		actors[id].position = Vector3(float(p.x), 0.7, float(p.z))
+		var material := actors[id].material_override as StandardMaterial3D
+		material.albedo_color = Color("73558c") if p.get("active_form") == "madregona" and str(p.get("disguise_animal", "")).is_empty() else Color("d9ddb9") if id == current else Color("c497ab")
 		if id == current:
 			self_state = p
 			nations.apply_server_affiliation(str(p.nation_id))
-			status.text = "%s · Vida %s · Nação %s · Carta %s" % [p.name, p.hp, p.nation_id, data.get("inventory", {}).get("cards", 0)]
-	soundtrack.update_scene(self_state, data.get("raid") is Dictionary, float(self_state.get("morph_until", 0)) > float(data.get("server_time", 0)))
+			status.text = "%s · HP %s/%s · Nação %s" % [p.name, p.hp, p.get("max_hp", 100), p.nation_id]
+	var level := mini(20, int((1.0 + sqrt(1.0 + 4.0 * float(progression.get("xp", 0)) / 50.0)) / 2.0))
+	var points := level * 3 - int(progression.get("vitality", 0)) - int(progression.get("power", 0)) - int(progression.get("spirit", 0))
+	character_status.text = "Nível %s · %s XP · %s pontos · Energia %s · %s" % [level, progression.get("xp", 0), points, int(progression.get("energy", 60)), "Madregona conquistada" if progression.get("madregona_unlocked", 0) else "Forma Madregona bloqueada"]
+	if not madregona.is_empty() and int(madregona.get("hp", 0)) > 0:
+		if not is_instance_valid(madregona_actor):
+			madregona_actor = cube(Vector3.ZERO, Vector3(0.6, 1.6, 0.6), Color("73558c"))
+		madregona_actor.position = Vector3(float(madregona.x), 0.8, float(madregona.z))
+		(madregona_actor.material_override as StandardMaterial3D).albedo_color = Color("73558c") if madregona.get("revealed", 0) else Color("d9ddb9")
+	elif is_instance_valid(madregona_actor):
+		madregona_actor.queue_free()
+	var shadow_near := not madregona.is_empty() and int(madregona.get("hp", 0)) > 0 and bool(madregona.get("revealed", 0)) and Vector2(float(madregona.x)-float(self_state.get("x", 0)), float(madregona.z)-float(self_state.get("z", 0))).length() < 6
+	soundtrack.update_scene(self_state, data.get("raid") is Dictionary, float(self_state.get("morph_until", 0)) > float(data.get("server_time", 0)), shadow_near)
 	for id in actors.keys():
 		if id not in present:
 			actors[id].queue_free()
@@ -109,7 +171,10 @@ func apply_snapshot(data: Dictionary) -> void:
 		nodes[resource.id] = cube(Vector3(float(resource.x), 0.3, float(resource.z)), Vector3(0.3, 0.6, 0.3), Color("a5e9d0"))
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventScreenTouch and event.pressed:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_Q: perform_action("Habilidade Q")
+		if event.physical_keycode == KEY_R: perform_action("Habilidade R")
+	elif event is InputEventScreenTouch and event.pressed:
 		set_target(event.position)
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		set_target(event.position)
@@ -139,11 +204,26 @@ func perform_action(action: String) -> void:
 	if self_state.is_empty():
 		return
 	match action:
+		"Rastrear": network.intent({"type": "hunt"})
+		"Habilidade Q", "Habilidade R":
+			var target_id := ""
+			if not madregona.is_empty() and int(madregona.get("hp", 0)) > 0 and Vector2(float(madregona.x)-float(self_state.x), float(madregona.z)-float(self_state.z)).length() <= 3:
+				target_id = "madregona"
+			elif last_snapshot.get("raid") is Dictionary and Vector2(float(self_state.x), float(self_state.z)-7).length() <= 3:
+				target_id = "boss"
+			else:
+				for p in last_snapshot.get("players", []):
+					if str(p.id) != current and str(p.nation_id) != nations.affiliation:
+						target_id = str(p.id)
+						break
+			network.intent({"type": "skill", "slot": 1 if action == "Habilidade Q" else 2, "target": target_id})
 		"Raide": raids.start_raid()
 		"Transformar": network.intent({"type": "morph"})
 		"Poção": network.intent({"type": "potion"})
 		"Atacar":
-			if last_snapshot.get("raid") is Dictionary:
+			if not madregona.is_empty() and int(madregona.get("hp", 0)) > 0 and Vector2(float(madregona.x)-float(self_state.x), float(madregona.z)-float(self_state.z)).length() <= 3:
+				network.intent({"type": "attack", "target": "madregona"})
+			elif last_snapshot.get("raid") is Dictionary:
 				raids.attack_boss()
 			else:
 				for p in last_snapshot.get("players", []):

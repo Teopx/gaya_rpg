@@ -61,3 +61,23 @@ O espaço To be continued apresenta Aurora como prólogo e sementes narrativas p
 `dist/chronicles.mjs` separa capítulos e relíquias por IDs estáveis. Uma relíquia aponta para um capítulo mesmo que sua nação ainda não exista. O catálogo atual mostra quatro prévias raras, sem drops, inventário ou poderes habilitados. Isso permite preparar a revelação de uma nação antes de ativar sua jogabilidade. O validador impede ativar coleta apenas mudando um campo visual.
 
 Em cada lançamento: escrever a origem de uma nação e suas relações com GAYA e os viventes; definir território, seres e funções; implementar as regras autoritativas, migrations e seed necessários; depois atualizar o capítulo para released mantendo seus IDs. Uma relíquia poderá aparecer antes dessa revelação, mas sua obtenção precisa de tabela de drops, persistência e validação no servidor. Novas raças não devem alterar a origem dos personagens existentes. Não há datas de lançamento prometidas no catálogo.
+
+## Madregona e desenvolvimento de personagens
+
+A Madregona é um encontro pessoal na fronteira (x: 6, z: 7), rastreável pela interface. Aparece como um errante de herança animal; o primeiro ataque revela a sombra. Tem 180 HP e causa pulsos de 12 de dano a cada 3 segundos a até 4 unidades de distância. A primeira vitória concede 250 XP e desbloqueia permanentemente sua forma; novas vitórias dão 50 XP, com intervalo de três minutos. A forma pode assumir a aparência das 21 heranças atuais, preservando nome, nação, continente e DNA. É um disfarce visual, sem copiar a identidade ou os atributos de outro jogador.
+
+A ficha Desenvolver personagem administra HP, energia, experiência, atributos, duas habilidades equipadas e formas. Há 20 níveis; o nível L começa em `50 * L * (L - 1)` XP. Cada nível, incluindo o primeiro, disponibiliza três pontos. Vitalidade adiciona 10 HP máximo, Poder adiciona 2 de dano básico e Espírito adiciona 5 de energia máxima e fortalece habilidades. Os pontos são permanentes nesta versão e só podem ser distribuídos no santuário. Descansar no santuário restaura HP e energia.
+
+Energia recupera 5 por segundo. Q e R usam as habilidades equipadas: Sopro restaurador (20 energia / 8 s), Pulso da centelha (15 / 4 s), Véu de sombras (25 / 12 s) e Garra umbral (25 / 6 s). As duas últimas exigem vitória sobre a Madregona e sua forma ativa. Véu reduz o dano pela metade durante seis segundos. A ficha descreve as fórmulas de cura/dano e o alcance. Trocar habilidades não limpa recargas.
+
+Coleta concede 4 XP; poções preparadas, 8; criaturas solo, 20; guardião, 150. XP, atributos e forma conquistada persistem após o renascimento, que restaura HP/energia e retorna à aparência original. A Madregona ainda viva recupera seus HP quando o desafiante morre.
+
+No online, o servidor valida pontos, propriedade do encontro, alcance, energia, recargas e desbloqueios. A migração `0002_madregona_progression.sql` preserva personagens antigos e adiciona os novos campos e encontros em D1. Personagens existentes começam o novo sistema com 0 XP e três pontos iniciais. Evolução privada é enviada apenas ao proprietário. As regras de cálculo são compartilhadas pelo servidor e modo solo em `dist/progression.js`; o save solo continua editável localmente.
+
+A trilha agora possui 14 temas, incluindo A Sombra entre os Viventes. O fonte Godot recebeu controles do novo protocolo e visualização básica da Madregona; precisa de nova exportação e validação no editor/CI. A experiência principal publicada é o cliente JavaScript.
+
+Teste de integração opt-in, que cria uma conta técnica, caminha e vence o encontro sem concessões administrativas:
+
+```sh
+node scripts/smoke-progression.mjs https://nacoes-hibridas.cleberfpaix.workers.dev --create-test-account
+```

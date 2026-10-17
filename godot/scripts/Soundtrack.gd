@@ -40,12 +40,13 @@ func set_loudness(value: float) -> void:
 	config.set_value("music", "volume", loudness)
 	config.save("user://soundtrack.cfg")
 
-func update_scene(character: Dictionary, raid_active: bool, morph_active: bool) -> void:
+func update_scene(character: Dictionary, raid_active: bool, morph_active: bool, shadow_near: bool = false) -> void:
 	var next := "opening"
 	if not character.is_empty():
 		next = str(CONTINENTS.get(str(character.get("continent", "")), "opening"))
 		if float(character.get("z", 0)) > 4: next = "frontier"
 		if raid_active: next = "raid"
+		if shadow_near: next = "madregona"
 		if morph_active: next = "ascension"
 	play_scene(next)
 

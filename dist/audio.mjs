@@ -51,7 +51,7 @@ if (typeof document !== 'undefined') {
   const get = id => document.getElementById(id);
   const settingsKey = 'gaya-audio-v1';
   const soundtrack = new GayaSoundtrack({
-    state: () => ({ hidden: document.hidden, creator: get('creator').open, codex: get('codex').open || get('chronicles').open, login: get('login').open, player, raid: !!raid, morph: morphUntil > clock }),
+    state: () => ({ hidden: document.hidden, creator: get('creator').open, codex: get('codex').open || get('chronicles').open, login: get('login').open, player, raid: !!raid, madregona: !!player && !!madregona?.revealed && madregona.hp>0 && distance(player,madregona)<6, morph: morphUntil > clock }),
     onStatus: text => { get('audioStatus').textContent = text; get('audioEnabled').checked = soundtrack.enabled; refreshButton(); },
   });
   let requested = false;

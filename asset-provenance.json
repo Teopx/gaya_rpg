@@ -53,6 +53,12 @@
       "origin": "Nation stories and relic descriptions drafted for ATMOSPHERE with AI assistance; no third-party fictional universe used as a source",
       "thirdPartySource": null,
       "exclusiveOwnershipVerified": false
+    },
+    {
+      "path": "dist/character.js + dist/progression.js + procedural Madregona geometry",
+      "origin": "Madregona concept supplied by the user; narrative, procedural visuals and gameplay implementation created for this project with AI assistance",
+      "thirdPartySource": null,
+      "exclusiveOwnershipVerified": false
     }
   ],
   "softwareDependencies": {

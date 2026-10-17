@@ -8,7 +8,7 @@ function client(){
   const element=s=>{if(!elements.has(s))elements.set(s,{textContent:'',value:'',style:{},dataset:{},open:false,classList:{add(){},remove(){},toggle(){}},setAttribute(name,value){this[name]=value;},replaceChildren(){},append(){},addEventListener(){},showModal(){this.open=true;},close(){this.open=false;},getBoundingClientRect(){return{width:800,height:700,left:0,top:0};},getContext(){return{setTransform(){}};}});return elements.get(s);};
   class Socket {static OPEN=1;readyState=1;close(){};send(){};}
   const context=vm.createContext({console,URL,WebSocket:Socket,fetch:async()=>({ok:false}),setTimeout(fn){const id=++nextTimer;timers.set(id,fn);return id;},clearTimeout(id){timers.delete(id);},performance:{now:()=>1000},localStorage:{getItem:()=>null,setItem(){}},document:{querySelector:element,querySelectorAll:()=>[],createElement:()=>({append(){}}),addEventListener(){}},Option:function(text,value){this.value=value;},ResizeObserver:class{observe(){}},devicePixelRatio:1,requestAnimationFrame(){},addEventListener(type,fn){events[type]=fn;},location:{href:'https://game.example/',protocol:'https:'},prompt:()=>null});
-  for(const file of ['dist/game.js','dist/network.js'])vm.runInContext(fs.readFileSync(file,'utf8'),context);
+  for(const file of ['dist/progression.js','dist/game.js','dist/character.js','dist/network.js'])vm.runInContext(fs.readFileSync(file,'utf8'),context);
   return{run:code=>vm.runInContext(code,context),timers,events,element};
 }
 

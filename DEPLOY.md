@@ -63,3 +63,11 @@ O título público é ATMOSPHERE — O Primeiro Sopro. A URL e os identificadore
 A política e o inventário de procedência estão em `asset-provenance.json`. Uma gravação externa ou asset de terceiros só deve entrar com licença e comprovantes adequados ao jogo/trailer e territórios pretendidos. O código de síntese não equivale a uma revisão jurídica ou musicológica mundial.
 
 Versao final publicada com audio e Cronicas: e972514a-bcf8-4ad4-9156-acbf856277ec. Verificacao HTTP concluida; arquivos WAV conferidos por SHA-256. URL: https://nacoes-hibridas.cleberfpaix.workers.dev .
+
+## Migração Madregona / progressão
+
+Aplicar `0002_madregona_progression.sql` antes de publicar o novo Worker. A migração é incremental: adiciona campos de evolução, tabela de encontros pessoais e atualiza o trigger de renascimento; não altera a migração inicial nem remove personagens. Os testes cobrem migração de personagem legado, recompensas e falhas transacionais. Fluxo: `npm run audio`, verificações do projeto, `npx wrangler deploy --dry-run --config wrangler.deploy.toml`, `npx wrangler d1 migrations apply nacoes-hibridas --remote --config wrangler.deploy.toml`, deploy e smoke. A migração deve ser aplicada antes do cliente/backend que consultam as novas colunas. A trilha possui agora 14 faixas.
+
+`scripts/smoke-progression.mjs <origem> --create-test-account` deixa uma conta técnica e um personagem Madregona QA evoluído, com credenciais aleatórias somente em memória. Usa o mesmo protocolo de qualquer jogador, encerra o WebSocket e revoga a sessão ao concluir. Não usa edição de banco nem endpoint de concessão de recursos.
+
+Versão Madregona publicada: `ea290c0a-97c9-4876-b62f-5ef52e12956b`. Migração 0002 e smoke de jogo remoto concluídos. A versão web está disponível na URL existente; o fonte Godot exige nova exportação para disponibilizar seus controles atualizados.

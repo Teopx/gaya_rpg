@@ -1,8 +1,8 @@
 # Resultados da revisao em 17/10/2026
 
-31 testes locais passaram, zero falhas. Sintaxe, TypeScript e git diff --check passaram.
+46 testes locais passaram, zero falhas. Sintaxe, TypeScript e git diff --check passaram.
 
-- Nove testes solo, nove de backend/SQLite e seis testes de regressão do cliente online.
+- Treze testes solo, nove de backend/SQLite, seis do cliente online, cinco de áudio, dois de crônicas e onze de progressão.
 - Regressao: status online preservado, teclado bloqueado pelo login, recuperacao de ticket, troca de personagem cancela reconexao e acoes seguras antes do primeiro snapshot.
 - Migrations e seed executados no D1 local e, nesta entrega, no D1 remoto: 28 nacoes e 448 recursos.
 - Integracao Wrangler/workerd local: health, cinco arquivos estaticos, Origin externo rejeitado, cadastro com cookie, criacao/listagem de personagem, ticket e snapshot WebSocket com 64 recursos.
@@ -12,7 +12,7 @@
 
 [Execucao 39067510586](https://github.com/Teopx/gaya_rpg/actions/runs/39067510586), commit 39eab89: test e godot passaram; deploy ignorado. Inclui GUT e exportacao Web Godot 4.4.1. A falha anterior na exportacao Godot foi resolvida pelo suporte a texturas mobile no commit atual. Godot nao esta instalado localmente.
 
-O workflow revisado usa npm ci e Wrangler do lockfile no deploy; publica apenas por workflow_dispatch com publish=true na main. Configure revisores obrigatorios no environment production do GitHub. As alteracoes desta revisao permanecem locais, sem execucao remota do workflow novo.
+O workflow revisado usa npm ci e Wrangler do lockfile no deploy; publica apenas por workflow_dispatch com publish=true na main. Configure revisores obrigatorios no environment production do GitHub. O workflow desta entrega ainda não foi executado remotamente; publicação e validação foram realizadas via Wrangler.
 
 ## Cloudflare
 
@@ -51,3 +51,15 @@ A ferramenta de UI retornou zero navegadores disponiveis: QA visual desktop/mobi
 - 31 testes, sintaxe e TypeScript aprovados. Verificação remota da atualização de áudio confirmou os hashes SHA-256 das 13 faixas, módulos JavaScript, título ATMOSPHERE e health. Reprodução auditiva e inspeção visual em navegador real seguem pendentes.
 
 Publicacao final verificada: e972514a-bcf8-4ad4-9156-acbf856277ec. A URL publica respondeu com o titulo ATMOSPHERE, To be continued, modulo Chronicles e as quatro previas de povos/reliquias. A verificacao de arquivos nao substitui QA visual ou auditivo.
+
+## Madregona / gestão e evolução
+
+- 46 testes passaram; sintaxe, TypeScript e diff aprovados. Incluem upgrade preservando dados antigos, limites de pontos, energia/recarga por habilidade, cura com HP máximo derivado, formas bloqueadas, alcance e propriedade do encontro.
+- Recompensa letal da Madregona é transacional e idempotente; falha simulada faz rollback de XP e desbloqueio. Pulsos repetidos não duplicam dano; Véu reduz dano; morte preserva XP e formas desbloqueadas.
+- Habilidades ofensivas funcionam contra criaturas solo, Madregona, guardião e PvP válido. Recompensas do guardião são compartilhadas por ataques e habilidades na mesma lógica idempotente.
+- Snapshot contém progresso privado apenas do dono; estado do encontro sobrevive a nova instância do objeto de coordenação usando D1.
+- Migrações 0001 e 0002 e seed passaram no workerd local. O smoke de protocolo real criou personagem, investiu pontos, andou até a fronteira, venceu com dano calculado pelo servidor, obteve 250 XP e forma, aplicou disfarce, voltou ao santuário, aumentou HP máximo, equipou Véu e validou energia/recarga.
+- Inicialização do renderer aguarda os scripts dependentes; teste cobre carregamento tardio da ficha.
+- Novo tema Madregona sintetizado localmente, totalizando 14 WAVs. Fontes Godot atualizados, sem execução local do editor. Não havia navegador conectado; QA visual/auditivo e carga remota continuam pendentes.
+
+Publicação Madregona validada na Cloudflare: `ea290c0a-97c9-4876-b62f-5ef52e12956b`. Migração 0002 aplicada no D1 remoto. O smoke remoto completo passou com movimento e combate normais: orçamento de atributos, forma bloqueada, encontro disfarçado, dano calculado pelo servidor, 250 XP, forma conquistada, disfarce sem mudar DNA, retorno ao santuário, HP máximo de 110, equipamento de Véu, consumo de energia e recarga. WebSocket encerrado e sessão técnica revogada. A página pública, controles, health e SHA-256 da nova trilha também foram verificados. PvP de habilidades foi coberto nos testes locais de fronteira, afiliação, presença e escudo; não houve combate de teste contra jogadores reais.
