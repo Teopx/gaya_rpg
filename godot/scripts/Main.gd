@@ -10,6 +10,7 @@ var moving := false
 var status := Label.new()
 var self_state: Dictionary = {}
 var last_snapshot: Dictionary = {}
+var soundtrack := GayaSoundtrack.new()
 
 func cube(position_value: Vector3, size: Vector3, color: Color) -> MeshInstance3D:
 	var mesh := MeshInstance3D.new()
@@ -24,6 +25,7 @@ func cube(position_value: Vector3, size: Vector3, color: Color) -> MeshInstance3
 	return mesh
 
 func _ready() -> void:
+	add_child(soundtrack)
 	add_child(network)
 	add_child(nations)
 	add_child(raids)
@@ -53,6 +55,21 @@ func _ready() -> void:
 	layer.add_child(panel)
 	status.text = "Entre na conta pela página principal e selecione um personagem."
 	panel.add_child(status)
+	var music_controls := HBoxContainer.new()
+	panel.add_child(music_controls)
+	var music_toggle := CheckButton.new()
+	music_toggle.text = "Trilha de GAYA"
+	music_toggle.toggled.connect(soundtrack.set_enabled)
+	music_controls.add_child(music_toggle)
+	var music_volume := HSlider.new()
+	music_volume.min_value = 0
+	music_volume.max_value = 1
+	music_volume.step = 0.01
+	music_volume.value = soundtrack.loudness
+	music_volume.custom_minimum_size = Vector2(120, 44)
+	music_volume.tooltip_text = "Volume da trilha sonora"
+	music_volume.value_changed.connect(soundtrack.set_loudness)
+	music_controls.add_child(music_volume)
 	var buttons := HBoxContainer.new()
 	panel.add_child(buttons)
 	for action in ["Coletar", "Atacar", "Raide", "Transformar", "Poção"]:
@@ -80,6 +97,7 @@ func apply_snapshot(data: Dictionary) -> void:
 			self_state = p
 			nations.apply_server_affiliation(str(p.nation_id))
 			status.text = "%s · Vida %s · Nação %s · Carta %s" % [p.name, p.hp, p.nation_id, data.get("inventory", {}).get("cards", 0)]
+	soundtrack.update_scene(self_state, data.get("raid") is Dictionary, float(self_state.get("morph_until", 0)) > float(data.get("server_time", 0)))
 	for id in actors.keys():
 		if id not in present:
 			actors[id].queue_free()

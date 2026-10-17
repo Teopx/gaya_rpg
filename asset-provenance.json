@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "policy": {
+    "thirdPartyCreativeAssetsRequireDocumentedPermission": true,
+    "noArtistImitationOrCopiedMelodies": true,
+    "noUnlicensedSamplesOrVoiceCloning": true,
+    "worldwideLegalClearance": "not_performed",
+    "trademarkClearanceForGAYA": "not_performed",
+    "trademarkClearanceForATMOSPHERE": "not_performed"
+  },
+  "assets": [
+    {
+      "path": "dist/emblem.svg",
+      "origin": "Created in the project with AI assistance; vector paths",
+      "thirdPartySource": null,
+      "exclusiveOwnershipVerified": false
+    },
+    {
+      "path": "dist/audio/*.wav",
+      "origin": "Locally synthesized score sketches created with AI assistance",
+      "sources": [
+        "dist/music.mjs",
+        "scripts/compose-music.mjs"
+      ],
+      "externalSamples": [],
+      "fingerprints": "dist/audio/manifest.json",
+      "similarityReview": "pending",
+      "exclusiveOwnershipVerified": false
+    },
+    {
+      "path": "dist/index.html",
+      "origin": "GAYA narrative drafted for the project with AI assistance",
+      "thirdPartySource": null,
+      "trademarkClearance": "pending"
+    },
+    {
+      "path": "dist/renderer3d.js",
+      "origin": "Procedural geometry rendered by project code; no imported models or textures",
+      "thirdPartySource": null
+    },
+    {
+      "path": "dist/style.css",
+      "origin": "Project styling; system fonts only; no font files redistributed",
+      "thirdPartySource": null
+    },
+    {
+      "path": "godot/scripts/*",
+      "origin": "Project code; engine licensing handled separately",
+      "thirdPartySource": null
+    },
+    {
+      "path": "dist/chronicles.mjs",
+      "origin": "Nation stories and relic descriptions drafted for ATMOSPHERE with AI assistance; no third-party fictional universe used as a source",
+      "thirdPartySource": null,
+      "exclusiveOwnershipVerified": false
+    }
+  ],
+  "softwareDependencies": {
+    "npm": "package-lock.json records exact versions, integrity and license expressions; preserve upstream notices for redistributed components",
+    "godot": {
+      "version": "4.4.1",
+      "license": "MIT",
+      "source": "https://godotengine.org/license/",
+      "noticeRequiredForRedistribution": true
+    },
+    "GUT": {
+      "version": "9.4.0",
+      "source": "https://github.com/bitwes/Gut",
+      "use": "Test-only; excluded from Godot export"
+    }
+  },
+  "releaseReview": [
+    "Review recordings and melodies for unintended similarity before commercial soundtrack or trailer release",
+    "Review ATMOSPHERE, GAYA, character names and visual identity for trademarks in target markets",
+    "Keep licenses and contributor agreements for any future recordings, commissioned artwork or purchased assets",
+    "Do not infer worldwide public-domain status or ownership from procedural or AI-assisted generation"
+  ],
+  "projectTitle": "ATMOSPHERE"
+}

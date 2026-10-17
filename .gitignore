@@ -11,3 +11,6 @@ dist/godot/
 
 # PowerShell cache created by local tooling
 Microsoft/Windows/PowerShell/
+
+dist/audio/
+godot/audio/

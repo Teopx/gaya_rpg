@@ -55,3 +55,11 @@ node scripts/smoke-online.mjs https://nacoes-hibridas.cleberfpaix.workers.dev --
 ```
 
 O script deixa uma conta técnica e um personagem Centelha QA no D1, usa credenciais aleatórias apenas em memória e encerra as sessões. Valida health, seis assets, rejeição de Origin externo, cadastro, cookie seguro, login, personagem e snapshot WebSocket com 64 recursos. Não substitui testes visuais, PvP com duas sessões ou carga.
+
+## Atualização ATMOSPHERE e áudio
+
+O título público é ATMOSPHERE — O Primeiro Sopro. A URL e os identificadores de banco/Worker mantêm os nomes técnicos anteriores. Antes de qualquer deploy local execute `npm run audio`; esse comando gera 13 WAVs estéreo PCM/22.050 Hz em `dist/audio/` e `godot/audio/`, além do manifesto com SHA-256. Esses diretórios são ignorados no Git e recriados pelo CI; não distribuir sem executar a geração. O total dos assets de áudio é de aproximadamente 29,6 MB; apenas a faixa em uso é carregada pelo cliente web. A exportação Godot inclui suas cópias e requer reexportação pelo CI.
+
+A política e o inventário de procedência estão em `asset-provenance.json`. Uma gravação externa ou asset de terceiros só deve entrar com licença e comprovantes adequados ao jogo/trailer e territórios pretendidos. O código de síntese não equivale a uma revisão jurídica ou musicológica mundial.
+
+Versao final publicada com audio e Cronicas: e972514a-bcf8-4ad4-9156-acbf856277ec. Verificacao HTTP concluida; arquivos WAV conferidos por SHA-256. URL: https://nacoes-hibridas.cleberfpaix.workers.dev .

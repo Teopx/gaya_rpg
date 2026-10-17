@@ -1,6 +1,6 @@
 # Resultados da revisao em 17/10/2026
 
-24 testes locais passaram, zero falhas. Sintaxe, TypeScript e git diff --check passaram.
+31 testes locais passaram, zero falhas. Sintaxe, TypeScript e git diff --check passaram.
 
 - Nove testes solo, nove de backend/SQLite e seis testes de regressão do cliente online.
 - Regressao: status online preservado, teclado bloqueado pelo login, recuperacao de ticket, troca de personagem cancela reconexao e acoes seguras antes do primeiro snapshot.
@@ -32,3 +32,22 @@ A ferramenta de UI retornou zero navegadores disponiveis: QA visual desktop/mobi
 - Sintaxe, 24 testes, TypeScript, diff e dry-run passaram.
 - Publicação: `379dbe74-ab8c-4ba4-9ef0-295422da543e`. Smoke remoto passou: health, seis assets, proteção de Origin, cadastro, cookie seguro, login, personagem, ticket e snapshot WebSocket com 64 recursos. Sessões técnicas encerradas.
 - Nenhum navegador conectado disponível nesta sessão; não houve inspeção visual em desktop/mobile. PvP de duas sessões, exportação Godot atual e carga de 100 WebSockets continuam pendentes.
+
+## ATMOSPHERE — O Primeiro Sopro / trilha sonora
+
+- Título público atualizado no cliente web, metadados e projeto Godot. GAYA permanece a origem da vida; 21 heranças animais receberam frases narrativas. IDs Cloudflare e saves antigos preservados.
+- 13 faixas instrumentais sintetizadas localmente: abertura, personagens, sete continentes, fronteira, raide, ascensão e trailer de 43,6 s. Partituras e síntese versionadas; sem samples ou gravações externas.
+- Reprodução opcional com gesto explícito; volume salvo; troca de cenário com crossfade de 1,4 s; pausa em aba oculta e cancelamento de áudio pendente. Tema do trailer reproduz uma vez; não há trailer em vídeo.
+- Cinco testes de áudio: cobertura das cenas; transição e mute; aba oculta durante carregamento; recuperação de autoplay e fim do trailer; PCM estéreo não silencioso sem clipping ou saltos nas bordas. Total: 29 testes, sintaxe e TypeScript aprovados.
+- Builds CI geram WAVs para web e Godot antes da exportação. Integração Godot adicionada, mas não executada localmente (editor indisponível).
+- Picos das faixas completas entre 0,374 e 0,450; RMS entre 0,103 e 0,124. São verificações numéricas, sem avaliação auditiva em aparelhos reais.
+- `asset-provenance.json` registra procedência assistida por IA, ausência de samples e revisão musicológica/jurídica pendente. Não há garantia de exclusividade ou liberação de marca mundial de ATMOSPHERE/GAYA.
+
+## Crônicas das Nações / To be continued
+
+- Espaço permanente no fim da experiência e diálogo com o nascimento de Aurora e quatro capítulos ainda não revelados: Anciões, Dragonas, Sirenes e Vampiros.
+- Quatro prévias de relíquias raras com vínculo a capítulos de nações futuras. Não são drops, itens do inventário ou novas raças jogáveis.
+- Catálogo extensível por IDs; testes validam relíquias de nações não reveladas e rejeitam IDs duplicados, referências órfãs e ativação de loot sem integração do servidor.
+- 31 testes, sintaxe e TypeScript aprovados. Verificação remota da atualização de áudio confirmou os hashes SHA-256 das 13 faixas, módulos JavaScript, título ATMOSPHERE e health. Reprodução auditiva e inspeção visual em navegador real seguem pendentes.
+
+Publicacao final verificada: e972514a-bcf8-4ad4-9156-acbf856277ec. A URL publica respondeu com o titulo ATMOSPHERE, To be continued, modulo Chronicles e as quatro previas de povos/reliquias. A verificacao de arquivos nao substitui QA visual ou auditivo.

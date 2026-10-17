@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci --ignore-scripts
+      - run: npm run audio
       - run: npm run check
       - run: npm test
       - run: npm run typecheck
@@ -42,6 +43,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node scripts/compose-music.mjs
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: '4.4.1'
@@ -84,6 +89,7 @@ jobs:
         with:
           name: godot-web
           path: dist/godot/
+      - run: npm run audio
       - run: node scripts/configure-cloud.mjs
       - run: node scripts/seed.mjs
       - run: npx --no-install wrangler deploy --dry-run --config wrangler.deploy.toml

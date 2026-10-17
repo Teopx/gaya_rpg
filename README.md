@@ -1,4 +1,4 @@
-# GAYA — Nações Híbridas
+# ATMOSPHERE — O Primeiro Sopro
 
 RPG sandbox de fantasia primordial para navegadores desktop, Android e iOS. GAYA, a dona da vida, dá origem aos viventes, deuses e semideuses na Era do Primeiro Sopro.
 
@@ -43,3 +43,21 @@ Configure a origem HTTPS exata. Senhas são derivadas com PBKDF2/SHA-256, sal al
 ## Estado remoto
 
 O repositório é `Teopx/gaya_rpg`; a branch local `main` estava limpa e alinhada a `origin/main` (`39eab89`) no início da revisão. A execução GitHub Actions [39067510586](https://github.com/Teopx/gaya_rpg/actions/runs/39067510586) concluiu os jobs de teste e Godot com sucesso; o deploy foi ignorado. A versão GAYA está publicada no Worker. O deploy via GitHub Actions continua dependendo dos secrets, variables e environment production descritos na documentação. Consulte [DEPLOY.md](DEPLOY.md).
+
+## Identidade, trilha e procedência
+
+ATMOSPHERE — O Primeiro Sopro é o título do jogo. ATMOSPHERE nomeia o mundo despertado por GAYA; o subtítulo liga o nascimento do mundo aos viventes híbridos. Cada uma das 21 heranças animais tem uma frase narrativa na criação, sem prometer atributos ou habilidades ainda não implementados. GAYA permanece a dona da vida na narrativa. Os nomes técnicos Cloudflare e a chave de save local são mantidos para preservar recursos e progresso. A escolha do título não representa pesquisa ou liberação de marca.
+
+Execute `npm run audio` antes de servir ou publicar: gera 13 temas instrumentais sintetizados em `dist/audio` e `godot/audio`. As partituras e a síntese são versionadas; os WAVs são reproduzíveis e gerados pelo CI. Há abertura, personagens, sete continentes, fronteira, raide, ascensão e tema de trailer em quatro atos (43,6 segundos). O trailer em vídeo ainda não foi produzido. Ative a trilha na criação ou no menu de áudio; o volume é salvo, há transição de 1,4 segundo e pausa em aba oculta.
+
+Os temas são esboços de composição e síntese feitos com assistência de IA para o projeto, sem importar gravações, samples ou melodias de terceiros. Não houve revisão musicológica, prova de exclusividade ou liberação jurídica mundial. A procedência e os pontos de revisão estão em `asset-provenance.json`; o manifesto gerado inclui SHA-256 dos WAVs.
+
+Novos assets de terceiros exigem licença documentada para o uso pretendido e os territórios de distribuição, incluindo jogo, publicidade e trailer quando aplicável. Não incorporar imitações deliberadas, clones de voz ou materiais sem origem conhecida. Preservar avisos e licenças de dependências. O Godot usa licença MIT: https://godotengine.org/license/ . O lockfile registra versões e expressões de licença das ferramentas npm; isso não substitui a revisão das obrigações ao redistribuí-las. A WIPO explica a territorialidade e o uso de obras protegidas em https://www.wipo.int/en/web/copyright/faq-copyright .
+
+## Crônicas e nascimento de novas nações
+
+O espaço To be continued apresenta Aurora como prólogo e sementes narrativas para Anciões, Dragonas, Sirenes e Vampiros. Nomes de nações, terras, calendário e funções jogáveis futuras permanecem por definir. As funções descritas são intenções narrativas.
+
+`dist/chronicles.mjs` separa capítulos e relíquias por IDs estáveis. Uma relíquia aponta para um capítulo mesmo que sua nação ainda não exista. O catálogo atual mostra quatro prévias raras, sem drops, inventário ou poderes habilitados. Isso permite preparar a revelação de uma nação antes de ativar sua jogabilidade. O validador impede ativar coleta apenas mudando um campo visual.
+
+Em cada lançamento: escrever a origem de uma nação e suas relações com GAYA e os viventes; definir território, seres e funções; implementar as regras autoritativas, migrations e seed necessários; depois atualizar o capítulo para released mantendo seus IDs. Uma relíquia poderá aparecer antes dessa revelação, mas sua obtenção precisa de tabela de drops, persistência e validação no servidor. Novas raças não devem alterar a origem dos personagens existentes. Não há datas de lançamento prometidas no catálogo.
